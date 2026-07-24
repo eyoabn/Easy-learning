@@ -1,6 +1,26 @@
 import 'user_model.dart';
 import 'user_role.dart';
 
+class StudentItem {
+  final String id;
+  final String name;
+  final String email;
+  final String grade;
+  final int score;
+  final String attendance;
+  final String status;
+
+  StudentItem({
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.grade,
+    required this.score,
+    required this.attendance,
+    required this.status,
+  });
+}
+
 class CourseItem {
   final String id;
   final String title;
@@ -82,7 +102,6 @@ class AuditLogItem {
 }
 
 class LmsDataMock {
-  // Live State Repositories
   static List<UserModel> pendingRegistrations = [
     UserModel(
       id: 'REG-101',
@@ -101,15 +120,6 @@ class LmsDataMock {
       department: 'Bio-Physics',
       accountStatus: AccountStatus.pendingAdmin,
       registeredAt: 'Today 12:15',
-    ),
-    UserModel(
-      id: 'REG-103',
-      name: 'Lucas Meyer',
-      email: 'l.meyer@student.edu',
-      role: UserRole.student,
-      department: 'Mechanical Eng',
-      accountStatus: AccountStatus.pendingAdmin,
-      registeredAt: 'Yesterday',
     ),
   ];
 
@@ -140,6 +150,36 @@ class LmsDataMock {
       courseId: '1',
       courseTitle: 'MATH 401 — Advanced Mathematics',
       status: EnrollmentStatus.accepted,
+    ),
+  ];
+
+  static List<StudentItem> sampleStudents = [
+    StudentItem(
+      id: '1',
+      name: 'Amara Diallo',
+      email: 'a.diallo@uni.edu',
+      grade: 'A-',
+      score: 91,
+      attendance: '97%',
+      status: 'active',
+    ),
+    StudentItem(
+      id: '2',
+      name: 'Luca Ferretti',
+      email: 'l.ferretti@uni.edu',
+      grade: 'B+',
+      score: 87,
+      attendance: '92%',
+      status: 'active',
+    ),
+    StudentItem(
+      id: '3',
+      name: 'Kwame Asante',
+      email: 'k.asante@uni.edu',
+      grade: 'C+',
+      score: 74,
+      attendance: '78%',
+      status: 'at-risk',
     ),
   ];
 
@@ -177,17 +217,6 @@ class LmsDataMock {
       nextDate: 'Wed, 9:00 AM',
       colorHex: '#8B5CF6',
     ),
-    CourseItem(
-      id: '4',
-      title: 'Data Structures & Algorithms',
-      tag: 'CS 301',
-      instructor: 'Dr. Min-Jun Lee',
-      instructorId: 'TCH-104',
-      progress: 41,
-      nextLesson: 'Graph Traversal Algorithms',
-      nextDate: 'Thu, 3:00 PM',
-      colorHex: '#F59E0B',
-    ),
   ];
 
   static List<AssignmentItem> sampleAssignments = [
@@ -207,14 +236,6 @@ class LmsDataMock {
       urgent: false,
       type: 'Lab Report',
     ),
-    AssignmentItem(
-      id: '3',
-      title: 'Essay: Post-Colonial Analysis',
-      course: 'LIT 220',
-      due: 'Jul 28',
-      urgent: false,
-      type: 'Essay',
-    ),
   ];
 
   static List<AuditLogItem> sampleAuditLogs = [
@@ -233,14 +254,6 @@ class LmsDataMock {
       action: 'ROOM_EGRESS_RECORDED',
       target: 'MATH 401 Session #44',
       ip: '10.0.4.12',
-    ),
-    AuditLogItem(
-      id: 'LOG-8839',
-      timestamp: '2026-07-24 12:40',
-      actor: 'Admin (System Admin)',
-      action: 'S3_QUOTA_RESIZED',
-      target: 'Engineering Bucket -> 5TB',
-      ip: '192.168.1.45',
     ),
   ];
 }

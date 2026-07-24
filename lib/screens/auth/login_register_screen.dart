@@ -87,7 +87,6 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
           child: Container(
-            maxWidth: 440,
             constraints: const BoxConstraints(maxWidth: 440),
             padding: const EdgeInsets.all(28),
             decoration: BoxDecoration(
