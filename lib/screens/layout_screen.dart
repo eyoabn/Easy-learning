@@ -1,0 +1,218 @@
+import 'package:flutter/material.dart';
+import '../models/user_role.dart';
+import '../models/user_model.dart';
+import '../theme/app_theme.dart';
+import 'placeholder_screens.dart';
+import 'admin_screen.dart';
+import 'dashboard_screen.dart';
+
+class LayoutScreen extends StatefulWidget {
+  final UserModel user;
+  final VoidCallback onLogout;
+
+  const LayoutScreen({
+    Key? key,
+    required this.user,
+    required this.onLogout,
+  }) : super(key: key);
+
+  @override
+  State<LayoutScreen> createState() => _LayoutScreenState();
+}
+
+class _LayoutScreenState extends State<LayoutScreen> {
+  int _currentIndex = 0;
+
+  // ── Admin gets a single-tab layout: just the admin panel + profile ────────
+  List<Widget> get _adminScreens => [
+        const AdminScreen(),
+        ProfileScreen(onLogout: widget.onLogout),
+      ];
+
+  static const _adminItems = [
+    _NavItem(icon: Icons.admin_panel_settings_rounded, label: 'Admin'),
+    _NavItem(icon: Icons.person_rounded, label: 'Profile'),
+  ];
+
+  // ── Student screens ───────────────────────────────────────────────────────
+  List<Widget> get _studentScreens => [
+        DashboardScreen(user: widget.user),
+        const ChatScreen(),
+        const SearchScreen(),
+        const NotificationsScreen(),
+        ProfileScreen(onLogout: widget.onLogout),
+      ];
+
+  static const _studentItems = [
+    _NavItem(icon: Icons.home_rounded, label: 'Home'),
+    _NavItem(icon: Icons.chat_bubble_rounded, label: 'Chat'),
+    _NavItem(icon: Icons.search_rounded, label: 'Search'),
+    _NavItem(icon: Icons.notifications_rounded, label: 'Alerts'),
+    _NavItem(icon: Icons.person_rounded, label: 'Profile'),
+  ];
+
+  // ── Teacher screens ───────────────────────────────────────────────────────
+  List<Widget> get _teacherScreens => [
+        DashboardScreen(user: widget.user),
+        const ChatScreen(),
+        const NotificationsScreen(),
+        ProfileScreen(onLogout: widget.onLogout),
+      ];
+
+  static const _teacherItems = [
+    _NavItem(icon: Icons.home_rounded, label: 'Home'),
+    _NavItem(icon: Icons.chat_bubble_rounded, label: 'Chat'),
+    _NavItem(icon: Icons.notifications_rounded, label: 'Alerts'),
+    _NavItem(icon: Icons.person_rounded, label: 'Profile'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    // Pick the right screens + nav items based on role
+    final List<Widget> screens;
+    final List<_NavItem> items;
+
+    final isAdmin = widget.user.role == UserRole.admin;
+    final isTeacher = widget.user.role == UserRole.teacher;
+
+    if (isAdmin) {
+      screens = _adminScreens;
+      items = _adminItems;
+    } else if (isTeacher) {
+      screens = _teacherScreens;
+      items = _teacherItems;
+    } else {
+      screens = _studentScreens;
+      items = _studentItems;
+    }
+
+    // Guard: if the stored index exceeds the new list length, reset to 0.
+    final safeIndex = _currentIndex.clamp(0, screens.length - 1);
+
+    return Scaffold(
+      body: IndexedStack(
+        index: safeIndex,
+        children: screens,
+      ),
+      bottomNavigationBar: _BottomNav(
+        items: items,
+        currentIndex: safeIndex,
+        isAdmin: isAdmin,
+        isTeacher: isTeacher,
+        onTap: (i) => setState(() => _currentIndex = i),
+      ),
+    );
+  }
+}
+
+// ── Bottom Navigation Bar ─────────────────────────────────────────────────────
+
+class _BottomNav extends StatelessWidget {
+  final List<_NavItem> items;
+  final int currentIndex;
+  final bool isAdmin;
+  final bool isTeacher;
+  final ValueChanged<int> onTap;
+
+  const _BottomNav({
+    required this.items,
+    required this.currentIndex,
+    required this.isAdmin,
+    this.isTeacher = false,
+    required this.onTap,
+  });
+
+  // Unified brand gradient — matches the home page header dark-blue
+  static const LinearGradient _brandGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFF1E3A8A), Color(0xFF1E1B4B)],
+  );
+  static const Color _brandColor = Color(0xFF1E3A8A);
+
+  LinearGradient get _activeGradient => _brandGradient;
+  Color get _activeTextColor => _brandColor;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.violet.withValues(alpha: 0.12),
+              blurRadius: 20,
+              offset: const Offset(0, -4),
+            ),
+          ],
+          border: Border(top: BorderSide(color: AppColors.border, width: 1)),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: List.generate(items.length, (i) {
+                final active = i == currentIndex;
+                return GestureDetector(
+                  onTap: () => onTap(i),
+                  behavior: HitTestBehavior.opaque,
+                  child: SizedBox(
+                    width: 64,
+                    child: Column(mainAxisSize: MainAxisSize.min, children: [
+                      // Active top indicator
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        height: 3,
+                        width: active ? 32 : 0,
+                        margin: const EdgeInsets.only(bottom: 5),
+                        decoration: BoxDecoration(
+                          gradient: _activeGradient,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                      // Icon container
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          gradient: active ? _activeGradient : null,
+                          borderRadius: BorderRadius.circular(14),
+                          boxShadow: active
+                              ? [
+                                  BoxShadow(
+                                    color: _activeGradient.colors.first
+                                        .withValues(alpha: 0.35),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 3),
+                                  )
+                                ]
+                              : [],
+                        ),
+                        child: Icon(items[i].icon,
+                            size: 22,
+                            color: active ? Colors.white : Colors.grey.shade400),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(items[i].label,
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: active
+                                ? _activeTextColor
+                                : Colors.grey.shade400,
+                          )),
+                    ]),
+                  ),
+                );
+              }),
+            ),
+          ),
+        ),
+      );
+}
+
+class _NavItem {
+  final IconData icon;
+  final String label;
+  const _NavItem({required this.icon, required this.label});
+}
