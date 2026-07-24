@@ -1,8 +1,12 @@
+import 'user_model.dart';
+import 'user_role.dart';
+
 class CourseItem {
   final String id;
   final String title;
   final String tag;
   final String instructor;
+  final String instructorId;
   final int progress;
   final String nextLesson;
   final String nextDate;
@@ -13,6 +17,7 @@ class CourseItem {
     required this.title,
     required this.tag,
     required this.instructor,
+    required this.instructorId,
     required this.progress,
     required this.nextLesson,
     required this.nextDate,
@@ -38,23 +43,23 @@ class AssignmentItem {
   });
 }
 
-class StudentItem {
+class StudentEnrollmentRequest {
   final String id;
-  final String name;
-  final String email;
-  final String grade;
-  final int score;
-  final String attendance;
-  final String status;
+  final String studentId;
+  final String studentName;
+  final String studentEmail;
+  final String courseId;
+  final String courseTitle;
+  EnrollmentStatus status;
 
-  StudentItem({
+  StudentEnrollmentRequest({
     required this.id,
-    required this.name,
-    required this.email,
-    required this.grade,
-    required this.score,
-    required this.attendance,
-    required this.status,
+    required this.studentId,
+    required this.studentName,
+    required this.studentEmail,
+    required this.courseId,
+    required this.courseTitle,
+    this.status = EnrollmentStatus.pendingTeacher,
   });
 }
 
@@ -77,46 +82,111 @@ class AuditLogItem {
 }
 
 class LmsDataMock {
+  // Live State Repositories
+  static List<UserModel> pendingRegistrations = [
+    UserModel(
+      id: 'REG-101',
+      name: 'Dr. Julian Thorne',
+      email: 'j.thorne@mit.edu',
+      role: UserRole.teacher,
+      department: 'Computer Science',
+      accountStatus: AccountStatus.pendingAdmin,
+      registeredAt: 'Today 14:20',
+    ),
+    UserModel(
+      id: 'REG-102',
+      name: 'Dr. Amrita Roy',
+      email: 'a.roy@oxford.edu',
+      role: UserRole.teacher,
+      department: 'Bio-Physics',
+      accountStatus: AccountStatus.pendingAdmin,
+      registeredAt: 'Today 12:15',
+    ),
+    UserModel(
+      id: 'REG-103',
+      name: 'Lucas Meyer',
+      email: 'l.meyer@student.edu',
+      role: UserRole.student,
+      department: 'Mechanical Eng',
+      accountStatus: AccountStatus.pendingAdmin,
+      registeredAt: 'Yesterday',
+    ),
+  ];
+
+  static List<StudentEnrollmentRequest> studentEnrollments = [
+    StudentEnrollmentRequest(
+      id: 'ENR-401',
+      studentId: 'STD-301',
+      studentName: 'Kwame Asante',
+      studentEmail: 'k.asante@student.edu',
+      courseId: '1',
+      courseTitle: 'MATH 401 — Advanced Mathematics',
+      status: EnrollmentStatus.pendingTeacher,
+    ),
+    StudentEnrollmentRequest(
+      id: 'ENR-402',
+      studentId: 'STD-302',
+      studentName: 'Sofia Reyes',
+      studentEmail: 's.reyes@student.edu',
+      courseId: '1',
+      courseTitle: 'MATH 401 — Advanced Mathematics',
+      status: EnrollmentStatus.pendingTeacher,
+    ),
+    StudentEnrollmentRequest(
+      id: 'ENR-403',
+      studentId: 'STD-201',
+      studentName: 'Amara Diallo',
+      studentEmail: 'a.diallo@student.edu',
+      courseId: '1',
+      courseTitle: 'MATH 401 — Advanced Mathematics',
+      status: EnrollmentStatus.accepted,
+    ),
+  ];
+
   static List<CourseItem> sampleCourses = [
     CourseItem(
       id: '1',
       title: 'Advanced Mathematics',
       tag: 'MATH 401',
       instructor: 'Dr. Elena Vasquez',
+      instructorId: 'TCH-101',
       progress: 72,
       nextLesson: 'Differential Equations — Part 3',
       nextDate: 'Today, 2:00 PM',
-      colorHex: '#4C7EFF',
+      colorHex: '#6366F1',
     ),
     CourseItem(
       id: '2',
       title: 'Molecular Biology',
       tag: 'BIO 310',
       instructor: 'Prof. James Okonkwo',
+      instructorId: 'TCH-102',
       progress: 55,
       nextLesson: 'CRISPR Gene Editing Techniques',
       nextDate: 'Tomorrow, 10:00 AM',
-      colorHex: '#00D9A3',
+      colorHex: '#10B981',
     ),
     CourseItem(
       id: '3',
       title: 'Contemporary Literature',
       tag: 'LIT 220',
       instructor: 'Dr. Sarah Kimani',
+      instructorId: 'TCH-103',
       progress: 88,
       nextLesson: 'Post-Colonial Narratives',
       nextDate: 'Wed, 9:00 AM',
-      colorHex: '#A78BFA',
+      colorHex: '#8B5CF6',
     ),
     CourseItem(
       id: '4',
       title: 'Data Structures & Algorithms',
       tag: 'CS 301',
       instructor: 'Dr. Min-Jun Lee',
+      instructorId: 'TCH-104',
       progress: 41,
       nextLesson: 'Graph Traversal Algorithms',
       nextDate: 'Thu, 3:00 PM',
-      colorHex: '#FB923C',
+      colorHex: '#F59E0B',
     ),
   ];
 
@@ -147,50 +217,11 @@ class LmsDataMock {
     ),
   ];
 
-  static List<StudentItem> sampleStudents = [
-    StudentItem(
-      id: '1',
-      name: 'Amara Diallo',
-      email: 'a.diallo@uni.edu',
-      grade: 'A-',
-      score: 91,
-      attendance: '97%',
-      status: 'active',
-    ),
-    StudentItem(
-      id: '2',
-      name: 'Luca Ferretti',
-      email: 'l.ferretti@uni.edu',
-      grade: 'B+',
-      score: 87,
-      attendance: '92%',
-      status: 'active',
-    ),
-    StudentItem(
-      id: '3',
-      name: 'Kwame Asante',
-      email: 'k.asante@uni.edu',
-      grade: 'C+',
-      score: 74,
-      attendance: '78%',
-      status: 'at-risk',
-    ),
-    StudentItem(
-      id: '4',
-      name: 'Mei-Ling Chen',
-      email: 'm.chen@uni.edu',
-      grade: 'A+',
-      score: 99,
-      attendance: '100%',
-      status: 'active',
-    ),
-  ];
-
   static List<AuditLogItem> sampleAuditLogs = [
     AuditLogItem(
       id: 'LOG-8841',
       timestamp: '2026-07-24 14:10',
-      actor: 'Admin (Amara D.)',
+      actor: 'Admin (System Admin)',
       action: 'USER_ROLE_UPDATE',
       target: 'Dr. Vasquez -> Lead Instructor',
       ip: '192.168.1.45',
@@ -206,7 +237,7 @@ class LmsDataMock {
     AuditLogItem(
       id: 'LOG-8839',
       timestamp: '2026-07-24 12:40',
-      actor: 'Admin (Amara D.)',
+      actor: 'Admin (System Admin)',
       action: 'S3_QUOTA_RESIZED',
       target: 'Engineering Bucket -> 5TB',
       ip: '192.168.1.45',
