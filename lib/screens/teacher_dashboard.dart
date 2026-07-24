@@ -73,7 +73,10 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
               // ── Quick Actions ──────────────────────────────────────────
               const SectionHeader(title: 'Quick Actions'),
               const SizedBox(height: 12),
-              _TeacherQuickActions(onPostCreated: _refresh),
+              _TeacherQuickActions(
+                onRequestCourse: _showRequestCourseForm,
+                onPostCreated: _refresh,
+              ),
               const SizedBox(height: 24),
 
               // ── My Classes ──────────────────────────────────────────────
@@ -108,6 +111,95 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
             ]),
           )),
         ]),
+      ),
+    );
+  }
+
+  void _showRequestCourseForm() {
+    final titleCtrl = TextEditingController();
+    final descCtrl = TextEditingController();
+    final studentsCtrl = TextEditingController();
+    
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Request New Course', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 16),
+              TextField(
+                controller: titleCtrl,
+                decoration: InputDecoration(
+                  labelText: 'Course Title',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: descCtrl,
+                maxLines: 3,
+                decoration: InputDecoration(
+                  labelText: 'Course Description',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: studentsCtrl,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: 'Expected Number of Students',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.violet,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  onPressed: () {
+                    if (titleCtrl.text.isEmpty || studentsCtrl.text.isEmpty) return;
+                    
+                    final request = CourseRequest(
+                      id: 'req_${DateTime.now().millisecondsSinceEpoch}',
+                      title: titleCtrl.text.trim(),
+                      description: descCtrl.text.trim(),
+                      teacherId: widget.user.id,
+                      teacherName: widget.user.name,
+                      studentCount: int.tryParse(studentsCtrl.text) ?? 0,
+                      createdAt: DateTime.now(),
+                    );
+                    
+                    setState(() {
+                      mockCourseRequests.add(request);
+                    });
+                    
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Course request submitted to Admin!'), backgroundColor: AppColors.emerald),
+                    );
+                  },
+                  child: const Text('Submit Request', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -161,14 +253,16 @@ class _TeacherStatBox extends StatelessWidget {
 }
 
 class _TeacherQuickActions extends StatelessWidget {
+  final VoidCallback? onRequestCourse;
   final Future<void> Function()? onPostCreated;
-  const _TeacherQuickActions({this.onPostCreated});
+  
+  const _TeacherQuickActions({this.onRequestCourse, this.onPostCreated});
 
   @override
   Widget build(BuildContext context) {
     final actions = [
+      {'icon': Icons.add_chart_rounded, 'label': 'Request Course', 'gi': 0},
       {'icon': Icons.post_add_rounded, 'label': 'Create Post', 'gi': 3},
-      {'icon': Icons.calendar_month_rounded, 'label': 'Schedule', 'gi': 0},
       {'icon': Icons.assignment_turned_in_rounded, 'label': 'Grade Work', 'gi': 1},
       {'icon': Icons.analytics_rounded, 'label': 'Analytics', 'gi': 2},
     ];
@@ -176,7 +270,9 @@ class _TeacherQuickActions extends StatelessWidget {
       final gi = a['gi'] as int;
       return Expanded(child: GestureDetector(
         onTap: () {
-          // Placeholder action
+          if (a['label'] == 'Request Course' && onRequestCourse != null) {
+            onRequestCourse!();
+          }
         },
         child: GlassCard(
           padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 4),

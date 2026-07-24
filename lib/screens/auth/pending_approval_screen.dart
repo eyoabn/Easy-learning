@@ -1,109 +1,151 @@
 import 'package:flutter/material.dart';
-import '../../models/user_model.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/common_widgets.dart';
 
 class PendingApprovalScreen extends StatelessWidget {
-  final UserModel user;
-  final VoidCallback onCheckStatus;
-  final VoidCallback onSignOut;
+  final String role;
+  final VoidCallback? onLogout;
 
   const PendingApprovalScreen({
     Key? key,
-    required this.user,
-    required this.onCheckStatus,
-    required this.onSignOut,
+    required this.role,
+    this.onLogout,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final isTeacher = role == 'teacher';
+
     return Scaffold(
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 420),
-          child: Container(
-            padding: const EdgeInsets.all(32),
-            decoration: BoxDecoration(
-              color: AppTheme.darkCardColor,
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: AppTheme.darkBorderColor),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 72,
-                  height: 72,
-                  decoration: BoxDecoration(
-                    color: AppTheme.warningColor.withOpacity(0.15),
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppTheme.warningColor.withOpacity(0.4)),
+      backgroundColor: AppColors.background,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(28),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Icon
+              Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  gradient: AppGradients.orange,
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [BoxShadow(color: AppColors.cyan.withValues(alpha: 0.3), blurRadius: 20, offset: const Offset(0, 8))],
+                ),
+                child: const Icon(Icons.hourglass_top_rounded, color: Colors.white, size: 48),
+              ),
+              const SizedBox(height: 32),
+
+              // Title
+              const Text(
+                'Awaiting Approval',
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+
+              // Subtitle
+              Text(
+                isTeacher
+                    ? 'Your teacher account has been registered successfully. An admin will review and approve your account shortly.'
+                    : 'Your student account is pending approval. Please wait for an administrator to verify your enrollment.',
+                style: const TextStyle(fontSize: 15, color: AppColors.textSecondary, height: 1.6),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 32),
+
+              // Status card
+              GlassCard(
+                padding: const EdgeInsets.all(20),
+                child: Column(children: [
+                  _StatusStep(
+                    icon: Icons.person_add_rounded,
+                    label: 'Account Created',
+                    done: true,
                   ),
-                  child: const Icon(Icons.hourglass_top_rounded, color: AppTheme.warningColor, size: 36),
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  'Registration Pending Approval',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Hello ${user.name}, your account registration as a ${user.role.name.toUpperCase()} in ${user.department} has been submitted.',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: AppTheme.textMuted, fontSize: 13, height: 1.5),
-                ),
-                const SizedBox(height: 16),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppTheme.darkSurfaceColor,
-                    borderRadius: BorderRadius.circular(12),
+                  _StatusLine(),
+                  _StatusStep(
+                    icon: Icons.admin_panel_settings_rounded,
+                    label: 'Admin Review',
+                    done: false,
+                    active: true,
                   ),
-                  child: const Row(
-                    children: [
-                      Icon(Icons.shield_outlined, color: AppTheme.primaryColor, size: 20),
-                      SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          'Governance Policy: System Administrator must verify credentials before granting access.',
-                          style: TextStyle(color: Colors.white70, fontSize: 11),
-                        ),
-                      ),
-                    ],
+                  _StatusLine(),
+                  _StatusStep(
+                    icon: Icons.check_circle_rounded,
+                    label: isTeacher ? 'Access Granted' : 'Enrollment Confirmed',
+                    done: false,
                   ),
+                ]),
+              ),
+              const SizedBox(height: 32),
+
+              // Info chip
+              InfoChip(
+                label: '⏱  Approval usually takes less than 24 hours',
+                color: AppColors.blue,
+              ),
+              const SizedBox(height: 40),
+
+              // Logout
+              if (onLogout != null)
+                TextButton.icon(
+                  onPressed: onLogout,
+                  icon: const Icon(Icons.logout_rounded, size: 16, color: AppColors.textSecondary),
+                  label: const Text('Sign out', style: TextStyle(color: AppColors.textSecondary, fontWeight: FontWeight.bold)),
                 ),
-                const SizedBox(height: 24),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: onSignOut,
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: AppTheme.textMuted,
-                          side: const BorderSide(color: AppTheme.darkBorderColor),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                        ),
-                        child: const Text('Sign Out'),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: onCheckStatus,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.primaryColor,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                        ),
-                        child: const Text('Refresh Status'),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+            ],
           ),
         ),
       ),
     );
   }
+}
+
+class _StatusStep extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool done;
+  final bool active;
+
+  const _StatusStep({required this.icon, required this.label, required this.done, this.active = false});
+
+  @override
+  Widget build(BuildContext context) {
+    final color = done ? AppColors.emerald : active ? AppColors.blue : AppColors.textSecondary;
+
+    return Row(children: [
+      Container(
+        width: 36, height: 36,
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.12),
+          shape: BoxShape.circle,
+          border: Border.all(color: color.withValues(alpha: 0.4), width: 1.5),
+        ),
+        child: Icon(done ? Icons.check_rounded : icon, color: color, size: 18),
+      ),
+      const SizedBox(width: 12),
+      Text(
+        label,
+        style: TextStyle(
+          fontWeight: active || done ? FontWeight.bold : FontWeight.normal,
+          color: done ? AppColors.emerald : active ? AppColors.textPrimary : AppColors.textSecondary,
+          fontSize: 14,
+        ),
+      ),
+      if (active) ...[
+        const SizedBox(width: 8),
+        SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.blue)),
+      ],
+    ]);
+  }
+}
+
+class _StatusLine extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(left: 17),
+    child: Container(width: 2, height: 20, color: AppColors.border),
+  );
 }

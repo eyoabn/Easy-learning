@@ -37,7 +37,7 @@ class _LayoutScreenState extends State<LayoutScreen> {
 
   // ── Student screens ───────────────────────────────────────────────────────
   List<Widget> get _studentScreens => [
-        DashboardScreen(user: widget.user),
+        StudentDashboard(user: widget.user),
         const ChatScreen(),
         const SearchScreen(),
         const NotificationsScreen(),
@@ -54,7 +54,7 @@ class _LayoutScreenState extends State<LayoutScreen> {
 
   // ── Teacher screens ───────────────────────────────────────────────────────
   List<Widget> get _teacherScreens => [
-        DashboardScreen(user: widget.user),
+        TeacherDashboard(user: widget.user),
         const ChatScreen(),
         const NotificationsScreen(),
         ProfileScreen(onLogout: widget.onLogout),

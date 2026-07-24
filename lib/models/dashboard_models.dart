@@ -44,6 +44,26 @@ class Announcement {
   });
 }
 
+class CourseRequest {
+  final String id;
+  final String title;
+  final String description;
+  final String teacherId;
+  final String teacherName;
+  final int studentCount;
+  final DateTime createdAt;
+
+  CourseRequest({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.teacherId,
+    required this.teacherName,
+    required this.studentCount,
+    required this.createdAt,
+  });
+}
+
 // ── Mock Data ─────────────────────────────────────────────────────────────────
 
 final List<Course> mockStudentCourses = [
@@ -55,6 +75,18 @@ final List<Course> mockStudentCourses = [
 final List<Course> mockTeacherCourses = [
   Course(id: 'c1', name: 'Intro to Computer Science', teacher: 'Dr. Vasquez', gradientIndex: 0, unread: 0, progress: 0, students: 120, pending: 15, avgGrade: 85),
   Course(id: 'c3', name: 'Physics 101', teacher: 'Dr. Vasquez', gradientIndex: 2, unread: 0, progress: 0, students: 45, pending: 0, avgGrade: 78),
+];
+
+final List<CourseRequest> mockCourseRequests = [
+  CourseRequest(
+    id: 'req1',
+    title: 'Advanced Machine Learning',
+    description: 'A comprehensive dive into neural networks and deep learning.',
+    teacherId: 't1',
+    teacherName: 'Dr. Vasquez',
+    studentCount: 30,
+    createdAt: DateTime.now().subtract(const Duration(hours: 2)),
+  ),
 ];
 
 final List<Announcement> mockAnnouncements = [

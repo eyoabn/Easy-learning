@@ -85,20 +85,8 @@ class _MainLmsShellState extends State<MainLmsShell> {
 
     if (_currentUser!.accountStatus == AccountStatus.pendingAdmin) {
       return PendingApprovalScreen(
-        user: _currentUser!,
-        onCheckStatus: () {
-          setState(() {});
-          if (_currentUser!.accountStatus == AccountStatus.approved) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Account approved by Manager! Portal unlocked.')),
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Status: Still pending System Admin (Manager) verification.')),
-            );
-          }
-        },
-        onSignOut: _signOut,
+        role: _currentUser!.role.name,
+        onLogout: _signOut,
       );
     }
 
