@@ -42,7 +42,7 @@ class _MainLmsShellState extends State<MainLmsShell> {
   @override
   void initState() {
     super.initState();
-    // Default demo user: Approved Student
+    // Default initial user: Approved Student (Amara Diallo)
     _currentUser = UserModel(
       id: 'STD-201',
       name: 'Amara Diallo',
@@ -93,11 +93,11 @@ class _MainLmsShellState extends State<MainLmsShell> {
           setState(() {});
           if (_currentUser!.accountStatus == AccountStatus.approved) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Account approved! Portal unlocked.')),
+              const SnackBar(content: Text('Account approved by Manager! Portal unlocked.')),
             );
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Status: Still waiting for System Admin verification.')),
+              const SnackBar(content: Text('Status: Still pending System Admin (Manager) verification.')),
             );
           }
         },
@@ -108,6 +108,7 @@ class _MainLmsShellState extends State<MainLmsShell> {
     return Scaffold(
       appBar: AppBar(
         title: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               padding: const EdgeInsets.all(6),
@@ -117,25 +118,25 @@ class _MainLmsShellState extends State<MainLmsShell> {
                 ),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Text('L', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+              child: const Text('L', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
             ),
-            const SizedBox(width: 10),
-            const Text('LearnSpace', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            const SizedBox(width: 8),
+            const Text('LearnSpace', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
             const SizedBox(width: 6),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
               decoration: BoxDecoration(
                 color: AppTheme.primaryColor.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(4),
               ),
-              child: const Text('v2.4', style: TextStyle(color: AppTheme.primaryColor, fontSize: 10, fontWeight: FontWeight.bold)),
+              child: const Text('v2.4', style: TextStyle(color: AppTheme.primaryColor, fontSize: 9, fontWeight: FontWeight.bold)),
             ),
           ],
         ),
         actions: [
-          // AI Features button
+          // AI Features Button
           IconButton(
-            icon: const Icon(Icons.auto_awesome, color: AppTheme.accentColor),
+            icon: const Icon(Icons.auto_awesome, color: AppTheme.accentColor, size: 20),
             tooltip: 'AI Suite',
             onPressed: () {
               showDialog(
@@ -145,9 +146,9 @@ class _MainLmsShellState extends State<MainLmsShell> {
             },
           ),
 
-          // Role Switcher Dropdown for testing
+          // Direct Role Switcher Dropdown (Testing & Demo)
           Padding(
-            padding: const EdgeInsets.only(right: 8.0),
+            padding: const EdgeInsets.only(right: 4.0),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<UserRole>(
                 value: _currentUser!.role,
@@ -159,7 +160,7 @@ class _MainLmsShellState extends State<MainLmsShell> {
                       if (newRole == UserRole.admin) {
                         _currentUser = UserModel(
                           id: 'ADM-001',
-                          name: 'System Administrator',
+                          name: 'System Administrator (Manager)',
                           email: 'admin@learnspace.edu',
                           role: UserRole.admin,
                           department: 'Governance',
@@ -205,7 +206,7 @@ class _MainLmsShellState extends State<MainLmsShell> {
 
           // Sign Out Button
           IconButton(
-            icon: const Icon(Icons.logout, color: AppTheme.textMuted, size: 20),
+            icon: const Icon(Icons.logout, color: AppTheme.textMuted, size: 18),
             tooltip: 'Sign Out',
             onPressed: _signOut,
           ),
@@ -220,11 +221,13 @@ class _MainLmsShellState extends State<MainLmsShell> {
               decoration: const BoxDecoration(color: AppTheme.darkSurfaceColor),
               accountName: Text(
                 _currentUser!.name,
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                overflow: TextOverflow.ellipsis,
               ),
               accountEmail: Text(
                 'Role: ${_currentUser!.role.displayName} · ${_currentUser!.department}',
-                style: const TextStyle(color: AppTheme.textMuted, fontSize: 12),
+                style: const TextStyle(color: AppTheme.textMuted, fontSize: 11),
+                overflow: TextOverflow.ellipsis,
               ),
               currentAccountPicture: CircleAvatar(
                 backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.3),
@@ -232,23 +235,30 @@ class _MainLmsShellState extends State<MainLmsShell> {
               ),
             ),
             ListTile(
-              leading: const Icon(Icons.dashboard, color: AppTheme.primaryColor),
-              title: const Text('Dashboard'),
+              leading: const Icon(Icons.dashboard, color: AppTheme.primaryColor, size: 20),
+              title: Text('${_currentUser!.role.displayName} Dashboard', style: const TextStyle(fontSize: 13)),
+              onTap: () => Navigator.pop(context),
+            ),
+            if (_currentUser!.role == UserRole.admin)
+              ListTile(
+                leading: const Icon(Icons.verified_user, color: AppTheme.warningColor, size: 20),
+                title: Text('Pending Approvals (${LmsDataMock.pendingRegistrations.length})', style: const TextStyle(fontSize: 13)),
+                onTap: () => Navigator.pop(context),
+              ),
+            if (_currentUser!.role == UserRole.teacher)
+              ListTile(
+                leading: const Icon(Icons.group_add, color: AppTheme.warningColor, size: 20),
+                title: Text('Student Applications (${LmsDataMock.studentEnrollments.where((e) => e.status == EnrollmentStatus.pendingTeacher).length})', style: const TextStyle(fontSize: 13)),
+                onTap: () => Navigator.pop(context),
+              ),
+            ListTile(
+              leading: const Icon(Icons.video_call, color: AppTheme.accentColor, size: 20),
+              title: const Text('Live Classrooms (LiveKit)', style: TextStyle(fontSize: 13)),
               onTap: () => Navigator.pop(context),
             ),
             ListTile(
-              leading: const Icon(Icons.class_, color: AppTheme.accentColor),
-              title: const Text('My Courses'),
-              onTap: () => Navigator.pop(context),
-            ),
-            ListTile(
-              leading: const Icon(Icons.video_call, color: AppTheme.warningColor),
-              title: const Text('Live Classrooms (LiveKit)'),
-              onTap: () => Navigator.pop(context),
-            ),
-            ListTile(
-              leading: const Icon(Icons.auto_awesome, color: Colors.purpleAccent),
-              title: const Text('AI Learning Suite'),
+              leading: const Icon(Icons.auto_awesome, color: Colors.purpleAccent, size: 20),
+              title: const Text('AI Learning Suite', style: TextStyle(fontSize: 13)),
               onTap: () {
                 Navigator.pop(context);
                 showDialog(context: context, builder: (_) => const AIAssistantDialog());
@@ -256,8 +266,8 @@ class _MainLmsShellState extends State<MainLmsShell> {
             ),
             const Divider(color: AppTheme.darkBorderColor),
             ListTile(
-              leading: const Icon(Icons.logout, color: AppTheme.alertRed),
-              title: const Text('Sign Out', style: TextStyle(color: AppTheme.alertRed)),
+              leading: const Icon(Icons.logout, color: AppTheme.alertRed, size: 20),
+              title: const Text('Sign Out', style: TextStyle(color: AppTheme.alertRed, fontSize: 13)),
               onTap: () {
                 Navigator.pop(context);
                 _signOut();

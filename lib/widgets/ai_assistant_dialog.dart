@@ -30,19 +30,27 @@ class _AIAssistantDialogState extends State<AIAssistantDialog> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Title
+            // Title Bar (Expanded to prevent overflow)
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Row(
-                  children: [
-                    Text('✨', style: TextStyle(fontSize: 20)),
-                    SizedBox(width: 8),
-                    Text('LearnSpace AI Suite', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                  ],
+                const Expanded(
+                  child: Row(
+                    children: [
+                      Text('✨', style: TextStyle(fontSize: 18)),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'LearnSpace AI Suite',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close, size: 20),
+                  icon: const Icon(Icons.close, size: 20, color: AppTheme.textMuted),
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
@@ -114,7 +122,7 @@ class _AIAssistantDialogState extends State<AIAssistantDialog> {
                   ),
                   child: Text(
                     _chatHistory[i]['text']!,
-                    style: const TextStyle(fontSize: 12, height: 1.4),
+                    style: const TextStyle(fontSize: 12, height: 1.4, color: Colors.white),
                   ),
                 ),
               );
@@ -131,7 +139,7 @@ class _AIAssistantDialogState extends State<AIAssistantDialog> {
             Expanded(
               child: TextField(
                 controller: _promptController,
-                style: const TextStyle(fontSize: 12),
+                style: const TextStyle(fontSize: 12, color: Colors.white),
                 decoration: const InputDecoration(
                   hintText: 'Ask AI Tutor a question...',
                   contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -176,7 +184,7 @@ class _AIAssistantDialogState extends State<AIAssistantDialog> {
       children: [
         const Text(
           'Automated Quiz Generation',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white),
         ),
         const SizedBox(height: 4),
         const Text(
@@ -191,7 +199,7 @@ class _AIAssistantDialogState extends State<AIAssistantDialog> {
             );
           },
           icon: const Icon(Icons.bolt, size: 16),
-          label: const Text('Generate Sample Quiz'),
+          label: const Text('Generate Sample Quiz', style: TextStyle(fontSize: 12)),
           style: ElevatedButton.styleFrom(
             backgroundColor: AppTheme.accentColor,
             foregroundColor: Colors.black,

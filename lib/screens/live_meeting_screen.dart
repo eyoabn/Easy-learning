@@ -34,8 +34,16 @@ class _LiveMeetingScreenState extends State<LiveMeetingScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: const [
-            Text('MATH 401 — Advanced Mathematics', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-            Text('LiveKit WebRTC Classroom · 6 Active', style: TextStyle(color: AppTheme.accentColor, fontSize: 11)),
+            Text(
+              'MATH 401 — Advanced Math',
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              overflow: TextOverflow.ellipsis,
+            ),
+            Text(
+              'LiveKit WebRTC Classroom · 6 Active',
+              style: TextStyle(color: AppTheme.accentColor, fontSize: 10),
+              overflow: TextOverflow.ellipsis,
+            ),
           ],
         ),
         actions: [
@@ -59,14 +67,14 @@ class _LiveMeetingScreenState extends State<LiveMeetingScreen> {
                     decoration: BoxDecoration(
                       color: AppTheme.darkCardColor,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: AppTheme.primaryColor.withOpacity(0.5), width: 2),
+                      border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.5), width: 2),
                     ),
                     child: Stack(
                       children: [
                         Center(
                           child: CircleAvatar(
                             radius: 36,
-                            backgroundColor: AppTheme.primaryColor.withOpacity(0.3),
+                            backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.3),
                             child: const Text('EV', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.primaryColor)),
                           ),
                         ),
@@ -76,14 +84,19 @@ class _LiveMeetingScreenState extends State<LiveMeetingScreen> {
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.7),
+                              color: Colors.black.withValues(alpha: 0.7),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: const Row(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(Icons.star, color: AppTheme.accentColor, size: 12),
                                 SizedBox(width: 4),
-                                Text('Dr. Elena Vasquez (Instructor)', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+                                Text(
+                                  'Dr. Elena Vasquez (Instructor)',
+                                  style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ],
                             ),
                           ),
@@ -109,42 +122,46 @@ class _LiveMeetingScreenState extends State<LiveMeetingScreen> {
                   ),
                 ),
 
-                // Bottom Controls Bar
+                // Scrollable Bottom Controls Bar (Prevents Overflow)
                 Container(
-                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   color: AppTheme.darkCardColor,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      IconButton(
-                        icon: Icon(_isMuted ? Icons.mic_off : Icons.mic),
-                        color: _isMuted ? AppTheme.alertRed : Colors.white,
-                        onPressed: () => setState(() => _isMuted = !_isMuted),
-                      ),
-                      IconButton(
-                        icon: Icon(_isVideoOff ? Icons.videocam_off : Icons.videocam),
-                        color: _isVideoOff ? AppTheme.alertRed : Colors.white,
-                        onPressed: () => setState(() => _isVideoOff = !_isVideoOff),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.back_hand, color: _isHandRaised ? AppTheme.accentColor : Colors.white),
-                        onPressed: () => setState(() => _isHandRaised = !_isHandRaised),
-                      ),
-                      if (widget.isTeacher)
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
                         IconButton(
-                          icon: const Icon(Icons.screen_share, color: AppTheme.primaryColor),
-                          onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Sharing Screen via LiveKit SDK...')),
-                            );
-                          },
+                          icon: Icon(_isMuted ? Icons.mic_off : Icons.mic),
+                          color: _isMuted ? AppTheme.alertRed : Colors.white,
+                          onPressed: () => setState(() => _isMuted = !_isMuted),
                         ),
-                      ElevatedButton(
-                        onPressed: () => Navigator.pop(context),
-                        style: ElevatedButton.styleFrom(backgroundColor: AppTheme.alertRed),
-                        child: const Text('Leave', style: TextStyle(color: Colors.white)),
-                      ),
-                    ],
+                        IconButton(
+                          icon: Icon(_isVideoOff ? Icons.videocam_off : Icons.videocam),
+                          color: _isVideoOff ? AppTheme.alertRed : Colors.white,
+                          onPressed: () => setState(() => _isVideoOff = !_isVideoOff),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.back_hand, color: _isHandRaised ? AppTheme.accentColor : Colors.white),
+                          onPressed: () => setState(() => _isHandRaised = !_isHandRaised),
+                        ),
+                        if (widget.isTeacher)
+                          IconButton(
+                            icon: const Icon(Icons.screen_share, color: AppTheme.primaryColor),
+                            onPressed: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Sharing Screen via LiveKit SDK...')),
+                              );
+                            },
+                          ),
+                        const SizedBox(width: 8),
+                        ElevatedButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: ElevatedButton.styleFrom(backgroundColor: AppTheme.alertRed),
+                          child: const Text('Leave', style: TextStyle(color: Colors.white, fontSize: 12)),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -154,13 +171,13 @@ class _LiveMeetingScreenState extends State<LiveMeetingScreen> {
           // Chat Drawer
           if (_showChat)
             Container(
-              width: 260,
+              width: 220,
               color: AppTheme.darkCardColor,
               child: Column(
                 children: [
                   const Padding(
-                    padding: EdgeInsets.all(12.0),
-                    child: Text('Live Chat', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                    padding: EdgeInsets.all(10.0),
+                    child: Text('Live Chat', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white)),
                   ),
                   const Divider(height: 1, color: AppTheme.darkBorderColor),
                   Expanded(
@@ -181,7 +198,7 @@ class _LiveMeetingScreenState extends State<LiveMeetingScreen> {
                                   color: AppTheme.darkSurfaceColor,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: Text(m['text']!, style: const TextStyle(fontSize: 12)),
+                                child: Text(m['text']!, style: const TextStyle(fontSize: 11, color: Colors.white)),
                               ),
                             ],
                           ),
@@ -190,18 +207,18 @@ class _LiveMeetingScreenState extends State<LiveMeetingScreen> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(6.0),
                     child: Row(
                       children: [
                         Expanded(
                           child: TextField(
                             controller: _msgController,
-                            style: const TextStyle(fontSize: 12),
-                            decoration: const InputDecoration(hintText: 'Send message...', contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8)),
+                            style: const TextStyle(fontSize: 11, color: Colors.white),
+                            decoration: const InputDecoration(hintText: 'Send message...', contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 6)),
                           ),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.send, color: AppTheme.primaryColor, size: 18),
+                          icon: const Icon(Icons.send, color: AppTheme.primaryColor, size: 16),
                           onPressed: () {
                             if (_msgController.text.trim().isNotEmpty) {
                               setState(() {
@@ -234,12 +251,12 @@ class _LiveMeetingScreenState extends State<LiveMeetingScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CircleAvatar(
-              radius: 18,
-              backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
-              child: Text(initials, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppTheme.primaryColor)),
+              radius: 16,
+              backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.2),
+              child: Text(initials, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppTheme.primaryColor)),
             ),
             const SizedBox(height: 4),
-            Text(name.split(' ')[0], style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500)),
+            Text(name.split(' ')[0], style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: Colors.white), overflow: TextOverflow.ellipsis),
           ],
         ),
       ),

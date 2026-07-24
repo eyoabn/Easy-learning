@@ -44,7 +44,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
         .toList();
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -63,28 +63,28 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
             'Good afternoon, Amara',
             style: TextStyle(
               color: Colors.white,
-              fontSize: 24,
+              fontSize: 22,
               fontWeight: FontWeight.bold,
             ),
           ),
           const Text(
             'Department of Computer Science · 1 Urgent Assignment Due',
-            style: TextStyle(color: AppTheme.textMuted, fontSize: 13),
+            style: TextStyle(color: AppTheme.textMuted, fontSize: 12),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 18),
 
-          // GPA & Course Overview Row
+          // Metric Cards
           Row(
             children: [
               Expanded(child: _buildMetricCard('GPA', '3.72', 'Current Semester')),
-              const SizedBox(width: 12),
+              const SizedBox(width: 10),
               Expanded(child: _buildMetricCard('Attendance', '96%', 'All Courses')),
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
 
           // Course Catalog & Enrollment Status
-          const Text('My Courses & Applications', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          const Text('My Courses & Applications', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white)),
           const SizedBox(height: 12),
 
           ListView.builder(
@@ -111,14 +111,14 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
               final isPending = request.status == EnrollmentStatus.pendingTeacher;
 
               return Card(
+                color: AppTheme.darkCardColor,
                 margin: const EdgeInsets.only(bottom: 12),
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(14.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -128,56 +128,63 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                             ),
                             child: Text(c.tag, style: const TextStyle(color: AppTheme.primaryColor, fontSize: 11, fontWeight: FontWeight.bold)),
                           ),
-                          if (isAccepted && isLiveToday)
-                            ElevatedButton.icon(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (_) => const LiveMeetingScreen(isTeacher: false)),
-                                );
-                              },
-                              icon: const Icon(Icons.live_tv, size: 14),
-                              label: const Text('Join Live', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppTheme.accentColor,
-                                foregroundColor: Colors.black,
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                minimumSize: const Size(60, 30),
-                              ),
-                            )
-                          else if (isPending)
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: AppTheme.warningColor.withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Text('Pending Teacher Acceptance', style: TextStyle(color: AppTheme.warningColor, fontSize: 11, fontWeight: FontWeight.bold)),
-                            )
-                          else if (!isAccepted)
-                            OutlinedButton(
-                              onPressed: () => _requestEnrollment(c),
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: AppTheme.primaryColor,
-                                side: const BorderSide(color: AppTheme.primaryColor),
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                                minimumSize: const Size(60, 30),
-                              ),
-                              child: const Text('Apply for Course', style: TextStyle(fontSize: 11)),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: isAccepted && isLiveToday
+                                  ? ElevatedButton.icon(
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (_) => const LiveMeetingScreen(isTeacher: false)),
+                                        );
+                                      },
+                                      icon: const Icon(Icons.live_tv, size: 12),
+                                      label: const Text('Join Live', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppTheme.accentColor,
+                                        foregroundColor: Colors.black,
+                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                        minimumSize: const Size(50, 28),
+                                      ),
+                                    )
+                                  : isPending
+                                      ? Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            color: AppTheme.warningColor.withValues(alpha: 0.15),
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          child: const Text('Pending Teacher', style: TextStyle(color: AppTheme.warningColor, fontSize: 10, fontWeight: FontWeight.bold)),
+                                        )
+                                      : !isAccepted
+                                          ? OutlinedButton(
+                                              onPressed: () => _requestEnrollment(c),
+                                              style: OutlinedButton.styleFrom(
+                                                foregroundColor: AppTheme.primaryColor,
+                                                side: const BorderSide(color: AppTheme.primaryColor),
+                                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                                minimumSize: const Size(50, 28),
+                                              ),
+                                              child: const Text('Apply for Course', style: TextStyle(fontSize: 10)),
+                                            )
+                                          : const SizedBox.shrink(),
                             ),
+                          ),
                         ],
                       ),
+                      const SizedBox(height: 8),
+                      Text(c.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white), overflow: TextOverflow.ellipsis),
+                      Text('Instructor: ${c.instructor}', style: const TextStyle(color: AppTheme.textMuted, fontSize: 11), overflow: TextOverflow.ellipsis),
                       const SizedBox(height: 10),
-                      Text(c.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                      Text('Instructor: ${c.instructor}', style: const TextStyle(color: AppTheme.textMuted, fontSize: 12)),
-                      const SizedBox(height: 12),
 
                       if (isAccepted) ...[
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text('Progress', style: TextStyle(color: AppTheme.textMuted, fontSize: 12)),
-                            Text('${c.progress}%', style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+                            const Text('Progress', style: TextStyle(color: AppTheme.textMuted, fontSize: 11)),
+                            Text('${c.progress}%', style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
                           ],
                         ),
                         const SizedBox(height: 4),
@@ -187,11 +194,11 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                             value: c.progress / 100,
                             backgroundColor: AppTheme.darkSurfaceColor,
                             color: AppTheme.primaryColor,
-                            minHeight: 6,
+                            minHeight: 5,
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        Text('Next Lesson: ${c.nextLesson}', style: const TextStyle(fontSize: 12, color: Colors.white70)),
+                        const SizedBox(height: 6),
+                        Text('Next Lesson: ${c.nextLesson}', style: const TextStyle(fontSize: 11, color: Colors.white70), overflow: TextOverflow.ellipsis),
                       ],
                     ],
                   ),
@@ -201,8 +208,8 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
           ),
           const SizedBox(height: 16),
 
-          // Assignments
-          const Text('Assignments & Homework', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          // Assignments List
+          const Text('Assignments & Homework', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white)),
           const SizedBox(height: 8),
           ListView.builder(
             shrinkWrap: true,
@@ -211,26 +218,42 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
             itemBuilder: (context, i) {
               final a = assignments[i];
               return Card(
+                color: AppTheme.darkCardColor,
                 margin: const EdgeInsets.only(bottom: 8),
-                child: ListTile(
-                  leading: Icon(
-                    a.urgent ? Icons.assignment_late : Icons.assignment,
-                    color: a.urgent ? AppTheme.alertRed : AppTheme.primaryColor,
-                  ),
-                  title: Text(a.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                  subtitle: Text('${a.course} · ${a.due}', style: TextStyle(color: a.urgent ? AppTheme.alertRed : AppTheme.textMuted, fontSize: 11)),
-                  trailing: ElevatedButton(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Opening submission portal for ${a.title}')),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.primaryColor,
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      minimumSize: const Size(60, 30),
-                    ),
-                    child: const Text('Submit', style: TextStyle(fontSize: 11)),
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Row(
+                    children: [
+                      Icon(
+                        a.urgent ? Icons.assignment_late : Icons.assignment,
+                        color: a.urgent ? AppTheme.alertRed : AppTheme.primaryColor,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(a.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white), overflow: TextOverflow.ellipsis),
+                            Text('${a.course} · ${a.due}', style: TextStyle(color: a.urgent ? AppTheme.alertRed : AppTheme.textMuted, fontSize: 11), overflow: TextOverflow.ellipsis),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      ElevatedButton(
+                        onPressed: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Opening submission portal for ${a.title}')),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppTheme.primaryColor,
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          minimumSize: const Size(50, 28),
+                        ),
+                        child: const Text('Submit', style: TextStyle(fontSize: 10)),
+                      ),
+                    ],
                   ),
                 ),
               );
@@ -243,16 +266,17 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
 
   Widget _buildMetricCard(String label, String value, String sub) {
     return Card(
+      color: AppTheme.darkCardColor,
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(14.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label.toUpperCase(), style: const TextStyle(color: AppTheme.textMuted, fontSize: 10, letterSpacing: 1, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 6),
-            Text(value, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
+            Text(label.toUpperCase(), style: const TextStyle(color: AppTheme.textMuted, fontSize: 9, letterSpacing: 0.8, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 4),
+            Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
             const SizedBox(height: 2),
-            Text(sub, style: const TextStyle(color: AppTheme.textMuted, fontSize: 11)),
+            Text(sub, style: const TextStyle(color: AppTheme.textMuted, fontSize: 10), overflow: TextOverflow.ellipsis),
           ],
         ),
       ),

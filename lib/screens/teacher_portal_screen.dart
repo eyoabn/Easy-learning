@@ -48,23 +48,26 @@ class _TeacherPortalScreenState extends State<TeacherPortalScreen> {
     final activeStudents = LmsDataMock.sampleStudents;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header Banner
+          // Header Banner (Expanded to prevent overflow)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text('INSTRUCTOR CONTROL CENTER', style: TextStyle(color: AppTheme.accentColor, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
-                  SizedBox(height: 4),
-                  Text('Dr. Elena Vasquez', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
-                  Text('Dept. of Mathematics & Computer Science', style: TextStyle(color: AppTheme.textMuted, fontSize: 13)),
-                ],
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('INSTRUCTOR CONTROL CENTER', style: TextStyle(color: AppTheme.accentColor, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.1)),
+                    SizedBox(height: 4),
+                    Text('Dr. Elena Vasquez', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),
+                    Text('Dept. of Math & Computer Science', style: TextStyle(color: AppTheme.textMuted, fontSize: 12), overflow: TextOverflow.ellipsis),
+                  ],
+                ),
               ),
+              const SizedBox(width: 8),
               ElevatedButton.icon(
                 onPressed: () {
                   Navigator.push(
@@ -72,25 +75,29 @@ class _TeacherPortalScreenState extends State<TeacherPortalScreen> {
                     MaterialPageRoute(builder: (_) => const LiveMeetingScreen(isTeacher: true)),
                   );
                 },
-                icon: const Icon(Icons.videocam, size: 16),
-                label: const Text('Start Live'),
+                icon: const Icon(Icons.videocam, size: 14),
+                label: const Text('Start Live', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.accentColor,
                   foregroundColor: Colors.black,
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 18),
 
-          // Tabs
-          Row(
-            children: [
-              _buildTabChip(0, 'Enrolled Roster (${activeStudents.length})'),
-              const SizedBox(width: 8),
-              _buildTabChip(1, 'Course Applications (${pendingStudents.length})'),
-            ],
+          // Scrollable Tabs
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _buildTabChip(0, 'Enrolled Roster (${activeStudents.length})'),
+                const SizedBox(width: 8),
+                _buildTabChip(1, 'Course Applications (${pendingStudents.length})'),
+              ],
+            ),
           ),
           const SizedBox(height: 20),
 
@@ -107,7 +114,7 @@ class _TeacherPortalScreenState extends State<TeacherPortalScreen> {
       onTap: () => setState(() => _activeTab = index),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected ? AppTheme.primaryColor : AppTheme.darkSurfaceColor,
           borderRadius: BorderRadius.circular(20),
@@ -119,7 +126,7 @@ class _TeacherPortalScreenState extends State<TeacherPortalScreen> {
           label,
           style: TextStyle(
             color: isSelected ? Colors.white : AppTheme.textMuted,
-            fontSize: 13,
+            fontSize: 12,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
           ),
         ),
@@ -131,7 +138,7 @@ class _TeacherPortalScreenState extends State<TeacherPortalScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Active Class Roster & Grades', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        const Text('Active Class Roster & Grades', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white)),
         const SizedBox(height: 12),
         ListView.builder(
           shrinkWrap: true,
@@ -141,28 +148,45 @@ class _TeacherPortalScreenState extends State<TeacherPortalScreen> {
             final s = students[i];
             final isAtRisk = s.status == 'at-risk';
             return Card(
+              color: AppTheme.darkCardColor,
               margin: const EdgeInsets.only(bottom: 8),
-              child: ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.2),
-                  child: Text(s.name[0], style: const TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.bold)),
-                ),
-                title: Text(s.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                subtitle: Text('${s.email} · Attendance: ${s.attendance}', style: const TextStyle(color: AppTheme.textMuted, fontSize: 12)),
-                trailing: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: isAtRisk ? AppTheme.alertRed.withValues(alpha: 0.15) : AppTheme.accentColor.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    '${s.grade} (${s.score}%)',
-                    style: TextStyle(
-                      color: isAtRisk ? AppTheme.alertRed : AppTheme.accentColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 18,
+                      backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.2),
+                      child: Text(s.name[0], style: const TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.bold)),
                     ),
-                  ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(s.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white), overflow: TextOverflow.ellipsis),
+                          const SizedBox(height: 2),
+                          Text('${s.email} · Attendance: ${s.attendance}', style: const TextStyle(color: AppTheme.textMuted, fontSize: 11), overflow: TextOverflow.ellipsis),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: isAtRisk ? AppTheme.alertRed.withValues(alpha: 0.15) : AppTheme.accentColor.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '${s.grade} (${s.score}%)',
+                        style: TextStyle(
+                          color: isAtRisk ? AppTheme.alertRed : AppTheme.accentColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             );
@@ -174,32 +198,40 @@ class _TeacherPortalScreenState extends State<TeacherPortalScreen> {
 
   Widget _buildEnrollmentRequestsSection(List<StudentEnrollmentRequest> pendingRequests) {
     return Card(
+      color: AppTheme.darkCardColor,
       child: Padding(
-        padding: const EdgeInsets.all(18.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Student Course Enrollment Applications', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                const Expanded(
+                  child: Text(
+                    'Student Course Applications',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(width: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: AppTheme.warningColor.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    '${pendingRequests.length} Pending Approval',
-                    style: const TextStyle(color: AppTheme.warningColor, fontSize: 12, fontWeight: FontWeight.bold),
+                    '${pendingRequests.length} Action Needed',
+                    style: const TextStyle(color: AppTheme.warningColor, fontSize: 10, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 6),
             const Text(
-              'As an approved Teacher, you must accept students into your course roster before they can view your lessons and join LiveKit classes.',
-              style: TextStyle(color: AppTheme.textMuted, fontSize: 12),
+              'As Teacher, accept student applications so they can access your lessons & LiveKit classes.',
+              style: TextStyle(color: AppTheme.textMuted, fontSize: 11),
             ),
             const SizedBox(height: 16),
 
@@ -221,38 +253,58 @@ class _TeacherPortalScreenState extends State<TeacherPortalScreen> {
                 separatorBuilder: (_, __) => const Divider(color: AppTheme.darkBorderColor),
                 itemBuilder: (context, i) {
                   final req = pendingRequests[i];
-                  return ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: CircleAvatar(
-                      backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.2),
-                      child: Text(req.studentName[0], style: const TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.bold)),
-                    ),
-                    title: Text(req.studentName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                    subtitle: Text('${req.studentEmail} · Applied for: ${req.courseTitle}', style: const TextStyle(color: AppTheme.textMuted, fontSize: 12)),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ElevatedButton.icon(
-                          onPressed: () => _acceptStudent(req),
-                          icon: const Icon(Icons.check, size: 14),
-                          label: const Text('Accept'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.accentColor,
-                            foregroundColor: Colors.black,
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            minimumSize: const Size(60, 32),
-                          ),
+                        Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 18,
+                              backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.2),
+                              child: Text(req.studentName[0], style: const TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.bold)),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(req.studentName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white), overflow: TextOverflow.ellipsis),
+                                  const SizedBox(height: 2),
+                                  Text('${req.studentEmail} · ${req.courseTitle}', style: const TextStyle(color: AppTheme.textMuted, fontSize: 11), overflow: TextOverflow.ellipsis),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 8),
-                        OutlinedButton(
-                          onPressed: () => _rejectStudent(req),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: AppTheme.alertRed,
-                            side: const BorderSide(color: AppTheme.alertRed),
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            minimumSize: const Size(60, 32),
-                          ),
-                          child: const Text('Decline'),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            ElevatedButton.icon(
+                              onPressed: () => _acceptStudent(req),
+                              icon: const Icon(Icons.check, size: 14),
+                              label: const Text('Accept', style: TextStyle(fontSize: 11)),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppTheme.accentColor,
+                                foregroundColor: Colors.black,
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                minimumSize: const Size(60, 32),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            OutlinedButton(
+                              onPressed: () => _rejectStudent(req),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: AppTheme.alertRed,
+                                side: const BorderSide(color: AppTheme.alertRed),
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                minimumSize: const Size(60, 32),
+                              ),
+                              child: const Text('Decline', style: TextStyle(fontSize: 11)),
+                            ),
+                          ],
                         ),
                       ],
                     ),
