@@ -4,7 +4,8 @@ import '../models/user_model.dart';
 import '../theme/app_theme.dart';
 import 'placeholder_screens.dart';
 import 'admin_screen.dart';
-import 'dashboard_screen.dart';
+import 'student_dashboard.dart';
+import 'teacher_dashboard.dart';
 
 class LayoutScreen extends StatefulWidget {
   final UserModel user;
