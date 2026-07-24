@@ -21,10 +21,9 @@ class AppTheme {
         primary: primaryColor,
         secondary: accentColor,
         surface: darkCardColor,
-        background: darkBackgroundColor,
         error: alertRed,
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: darkCardColor,
         elevation: 0,
         shape: RoundedRectangleBorder(

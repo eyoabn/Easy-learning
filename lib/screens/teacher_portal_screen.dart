@@ -11,8 +11,6 @@ class TeacherPortalScreen extends StatefulWidget {
 }
 
 class _TeacherPortalScreenState extends State<TeacherPortalScreen> {
-  int _selectedTab = 0;
-
   @override
   Widget build(BuildContext context) {
     final students = LmsDataMock.sampleStudents;
