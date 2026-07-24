@@ -22,23 +22,36 @@
 }
 
 :root {
-  --background: #0d1117;
-  --foreground: #e2e8f0;
-  --card: #161b22;
+  /* Core palette — deep navy dark mode */
+  --background:      #0b0f18;
+  --foreground:      #e2e8f0;
+  --card:            #111827;
   --card-foreground: #e2e8f0;
-  --primary: #4c7eff;
+
+  /* Brand */
+  --primary:         #4c7eff;
   --primary-foreground: #ffffff;
-  --secondary: #1e2530;
+
+  /* Neutrals */
+  --secondary:       #1c2333;
   --secondary-foreground: #94a3b8;
-  --muted: #1a1f2e;
+  --muted:           #161d2d;
   --muted-foreground: #64748b;
-  --accent: #00d9a3;
-  --accent-foreground: #0d1117;
-  --border: rgba(255,255,255,0.07);
-  --ring: #4c7eff;
-  --radius: 10px;
+
+  /* Accent — vibrant teal */
+  --accent:          #00d9a3;
+  --accent-foreground: #0b0f18;
+
+  /* Utility */
+  --border:          rgba(255, 255, 255, 0.07);
+  --ring:            #4c7eff;
+  --radius:          12px;
+
+  /* Input background */
+  --input-bg:        #0f1520;
 }
 
+/* ── Reset ─────────────────────────────────────────────────────────────── */
 * {
   box-sizing: border-box;
 }
@@ -53,18 +66,65 @@ body {
   color: var(--foreground);
   font-family: 'DM Sans', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Lexend', system-ui, sans-serif;
 }
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 99px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+/* ── Scrollbar ─────────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
 
+/* ── Typography helpers ─────────────────────────────────────────────────── */
 .mono {
   font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── Form input defaults ─────────────────────────────────────────────────── */
+input, select, textarea {
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+input::placeholder {
+  color: var(--muted-foreground);
+  opacity: 0.7;
+}
+
+input:focus, select:focus {
+  box-shadow: 0 0 0 2px rgba(76, 126, 255, 0.35);
+}
+
+/* ── Glassmorphism card utility ─────────────────────────────────────────── */
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ── Gradient text utility ──────────────────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(90deg, #4c7eff, #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Smooth transitions ─────────────────────────────────────────────────── */
+button {
+  transition: all 0.15s ease;
 }
